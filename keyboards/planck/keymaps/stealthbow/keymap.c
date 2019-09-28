@@ -94,20 +94,20 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 
 /* Adjust (Lower + Raise)
  * ,-----------------------------------------------------------------------------------.
- * |BCKLIT|BKLBrt|Mus Md|Aud on|Audoff|      |      |      |      |      |      | Reset|
+ * |BckLgt|BckBrt|      |      |      |      |      |      |      |      |      | Reset|
  * |------+------+------+------+------+-------------+------+------+------+------+------|
- * |Voice-|Voice+|Mus On|MusOff|MIDIon|MIDIof|TM_ON |TM_OFF|      |      |      |      |
+ * |      |      |      |      |      |      |      |      |      |      |      |      |
  * |------+------+------+------+------+------|------+------+------+------+------+------|
  * | CapsL|      |      |      |      |      |      |      |      |      |      |      |
  * |------+------+------+------+------+------+------+------+------+------+------+------|
- * | Ctrl |  OS  | Alt  |      |  N/A |             |  N/A |      |      |      |      |
+ * |      |      |      |      |  N/A |             |  N/A |      |      |      |      |
  * `-----------------------------------------------------------------------------------'
  */
 [_ADJUST] = {
-  {BL_STEP, BL_BRTG, MU_MOD,  AU_ON,   AU_OFF,  _______, _______, _______,  _______, _______, _______, RESET},
-  {MUV_DE,  MUV_IN,  MU_ON,   MU_OFF,  MI_ON,   MI_OFF,  TERM_ON, TERM_OFF, _______, _______, _______, _______},
-  {KC_LCAP, _______, _______, _______, _______, _______, _______, _______,  _______, _______, _______, _______},
-  {KC_LCTL, KC_LGUI, KC_LALT, _______, _______, _______, _______, _______,  _______, _______, _______, _______}
+  {BL_STEP, BL_BRTG, _______, _______, _______, _______, _______, _______, _______, _______, _______, RESET},
+  {_______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______},
+  {KC_LCAP, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______},
+  {_______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______}
 },
 
 /* Mouse (Mouse Keys)
@@ -130,43 +130,3 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 
 
 };
-
-uint32_t layer_state_set_user(uint32_t state) {
-  return update_tri_layer_state(state, _LOWER, _RAISE, _ADJUST);
-}
-
-bool process_record_user(uint16_t keycode, keyrecord_t *record) {
-  switch (keycode) {
-    case QWERTY:
-      if (record->event.pressed) {
-        print("mode just switched to qwerty and this is a huge string\n");
-        set_single_persistent_default_layer(_QWERTY);
-      }
-      return false;
-      break;
-    case BACKLIT:
-      if (record->event.pressed) {
-        register_code(KC_RSFT);
-        #ifdef BACKLIGHT_ENABLE
-          backlight_step();
-        #endif
-        PORTE &= ~(1<<6);
-      } else {
-        unregister_code(KC_RSFT);
-        PORTE |= (1<<6);
-      }
-      return false;
-      break;
-  }
-  return true;
-}
-
-bool music_mask_user(uint16_t keycode) {
-  switch (keycode) {
-    case RAISE:
-    case LOWER:
-      return false;
-    default:
-      return true;
-  }
-}
